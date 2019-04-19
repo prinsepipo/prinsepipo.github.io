@@ -46,10 +46,10 @@ for (let i = 0; i < board.length; i++) {
                     if (h1.innerHTML == "") {
                         h1.innerHTML = "X";
                         playerTurn = false;
+                        antiWin();
                     }
                 } else {
                     playerTurn = true;
-                    antiWin();
                 }
             }
 
