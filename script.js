@@ -165,7 +165,7 @@ function bot() {
         cell = board[0][0];
     } else if (board[0][1].innerText != "" && board[0][1].innerText == board[1][1].innerText && board[2][1].innerText == "") {
         cell = board[2][1];
-    } else if (board[1][0].innerText != "" && board[1][0].innerText == board[2][1].innerText && board[1][1].innerText == "") {
+    } else if (board[0][1].innerText != "" && board[0][1].innerText == board[2][1].innerText && board[1][1].innerText == "") {
         cell = board[1][1];
     } else if (board[1][1].innerText != "" && board[1][1].innerText == board[2][1].innerText && board[0][1].innerText == "") {
         cell = board[0][1];

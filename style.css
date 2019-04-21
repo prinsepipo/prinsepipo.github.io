@@ -22,7 +22,7 @@ h1 {
 }
 
 #details {
-    animation: fade-in 1s 3s forwards;
+    animation: fade-in 1s 3.5s forwards;
     opacity: 0;
     width: 80%;
     margin: 1em auto;
@@ -52,12 +52,19 @@ h1 {
     margin-top: 25px;
 }
 
+#footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5em;
+}
+
 
 /* Classes */
 .container {
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    height: 95vh;
     align-items: center;
     justify-content: center;
 }
@@ -73,7 +80,6 @@ h1 {
     display: flex;
     justify-content: center;
     align-items: center;
-    grid-gap: 3px;
     box-shadow: 0 0 10px rgb(0, 225, 255);
 }
 
@@ -102,6 +108,17 @@ h1 {
     position: relative;
 }
 
+.footer-h4 {
+    margin: 0;
+    padding: 0;
+}
+
+.footer-link {
+    padding: 0;
+    margin: 0;
+    text-decoration: none;
+    color: #1dcaff;
+}
 
 /*  Keyframes */
 @keyframes ttt {
@@ -125,5 +142,18 @@ h1 {
 
     100% {
         opacity: 1;
+    }
+}
+
+
+/*  Media Queries */
+@media (max-width: 600px) {
+    .board {
+        grid-template-rows: 50px 50px 50px;
+        grid-template-columns: 50px 50px 50px;
+    }
+
+    #title {
+        font-size: 2em;
     }
 }
