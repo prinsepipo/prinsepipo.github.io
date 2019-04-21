@@ -62,10 +62,8 @@ for (let i = 0; i < board.length; i++) {
                 // Get the h1 tag which contains the text of the cell.
                 let h1 = cell.getElementsByTagName("h1")[0];
 
-
-
-
                 // Hide the status text. Just hide it. LOL!
+                statusText.innerHTML = "";
                 statusText.style.visibility = "hidden";
 
                 // Set the cell text to "X" for player turn.
