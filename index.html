@@ -15,24 +15,7 @@
 <body>
 
     <main>
-        <section id="section-about">
-
-            <h1 id="title" class="color-accent">
-                <span id="tic" class="title-details">Tic</span>
-                <span id="tac" class="title-details"> Tac </span>
-                <span id="toe" class="title-details">Toe</span>
-            </h1>
-            <p id="details" class="color-accent title-details">One of the most common game you'll ever know. In this
-                game you will be
-                playing against a simple bot. So, good luck have fun.
-            </p>
-        </section>
-
-        <section id="section-game" class="container">
-
-            <div>
-                <h1 class="color-accent" style="padding-bottom: 2em;">Play Here</h1>
-            </div>
+        <section class="container">
 
             <div class="board">
                 <div id="_00" class="board-cell">
@@ -69,9 +52,28 @@
                 <button id="btn-reset">Reset</button>
             </div>
 
-            </sec>
+            <div id="div-about">
+                <h1 id="title" class="color-accent">
+                    <span id="tic" class="title-details">Tic</span>
+                    <span id="tac" class="title-details"> Tac </span>
+                    <span id="toe" class="title-details">Toe</span>
+                </h1>
+                <p id="details" class="color-accent title-details">One of the most common game you'll ever know. In this
+                    game you will be
+                    playing against a simple bot. So, good luck have fun.
+                </p>
+            </div>
+        </section>
+
+
 
     </main>
+
+    <audio id="player-sfx" src="audio/playerfx.mp3"></audio>
+    <audio id="bot-sfx" src="audio/botfx.mp3"></audio>
+    <audio id="win-sfx" src="audio/winfx.mp3"></audio>
+    <audio id="lose-sfx" src="audio/losefx.mp3"></audio>
+    <audio id="draw-sfx" src="audio/drawfx.mp3"></audio>
 
     <script src="script.js"></script>
 

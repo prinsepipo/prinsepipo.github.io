@@ -11,12 +11,22 @@ let board = [];
 // Winner status
 let thereIsWinner = false;
 
+// Board status
+let boardActive = true;
+
 // Status text reference
 let statusText = document.getElementById("status");
 
 // Button reset reference
 let buttonReset = document.getElementById("btn-reset");
 buttonReset.addEventListener("click", reset);
+
+// Sound effects reference
+let playerSFX = document.getElementById("player-sfx");
+let botSFX = document.getElementById("bot-sfx");
+let winSFX = document.getElementById("win-sfx");
+let loseSFX = document.getElementById("lose-sfx");
+let drawSFX = document.getElementById("draw-sfx");
 
 
 // Create the reference for each cell and append it to board.
@@ -36,14 +46,23 @@ for (let i = 0; i < board.length; i++) {
     board[i].forEach(cell => {
         // Each cell event listener.
         cell.addEventListener("click", () => {
-
-            // Get the h1 tag which contains the text of the cell.
-            let h1 = cell.getElementsByTagName("h1")[0];
-
             // Check the rules.
-            // Rule: Check if the cell clicked is empty.
-            if (h1.innerHTML == "" && thereIsWinner == false) {
-                // Cell is empty.
+            // Rule 1: Check if the board is active or clickable.
+            // Rule 2: Check if the cell clicked is empty.
+            // Rule 3: Check if there is no winner.
+            if (boardActive == true &&
+                cell.innerText == "" &&
+                thereIsWinner == false) {
+                // This will make the board disabled until the bots turn is done.
+                boardActive = false;
+
+                // Play playerSFX.
+                playerSFX.play();
+
+                // Get the h1 tag which contains the text of the cell.
+                let h1 = cell.getElementsByTagName("h1")[0];
+
+
 
 
                 // Hide the status text. Just hide it. LOL!
@@ -59,142 +78,149 @@ for (let i = 0; i < board.length; i++) {
                     // Call win function.
                     win("player");
 
-                    // Show text that the player wins.
-                    statusText.innerHTML = "You Win"
+                    setTimeout(() => {
+                        // Play winSFX.
+                        winSFX.play();
+                        // Show text that the player wins.
+                        statusText.innerHTML = "You Win"
+                    }, 500);
                 }
 
                 // Call the bot function for bots turn.
                 // Use setTimeout function to put delay to bots turn.
-                setTimeout(randomPlacement, 500);
+                setTimeout(bot, 500);
                 console.log("Bots turn's done.");
 
-                // Check for pattern again.
-                if (botPattern() == true) {
-                    // There is pattern for the bot.
-                    // Call win function.
-                    win("bot");
-
-                    // Show text that the bot wins.
-                    statusText.innerHTML = "Bot Win"
+                // Check for draw.
+                if (boardIsCrowded() == true && thereIsWinner == false) {
+                    // Play drawSFX.
+                    setTimeout(() => {
+                        drawSFX.play();
+                        statusText.style.visibility = "visible";
+                        statusText.innerHTML = "Draw!";
+                    }, 500);
                 }
-
-            } else if (boardIsCrowded) {
-                statusText.innerHTML == "Draw!";
             }
-
         });
     });
 }
 
 
 // This function will randomly place the bots turn on an empty cell.
-function randomPlacement() {
+function randomCell() {
     // We assign a random number from 0 to 3 (not including 3)
     //      to variable r1 and r2.
     let r1 = Math.floor(Math.random() * 3);
     let r2 = Math.floor(Math.random() * 3);
 
-    // Assign the first random cell to h1 variable which holds the text.
-    let h1 = board[r1][r2].getElementsByTagName("h1")[0];
+    // Assign the first random cell.
+    let cell = board[r1][r2];
 
     // If the first assigned variable is not empty. Re-random the numbers
-    //      and reassign a new cell to h1.
-    while (h1.innerHTML != "") {
+    //      and reassign a new cell to cell.
+    while (cell.innerText != "") {
         // Stop the loop if all of the boards cell is not empty.
         if (boardIsCrowded()) {
             break;
         }
         r1 = Math.floor(Math.random() * 3);
         r2 = Math.floor(Math.random() * 3);
-        h1 = board[r1][r2].getElementsByTagName("h1")[0];
+        cell = board[r1][r2];
     }
 
-    // Place the bots turn to the random empty cell.
-    if (thereIsWinner == false) {
-        h1.innerHTML = "O";
-    }
+    // Return a random empty cell.
+    return cell;
 }
 
 
 // This function is the players opponent. The bot.
 function bot() {
     // Cell reference
-    let cell = board[0][0]
+    let cell = randomCell();
 
     // Check if pattern is incoming.
-    if (boardIsCrowded == false) {
-        for (let i = 0; i < 3; i++) {
-            // Check Edges.
-            if (board[0][i].innerText == "X" || board[0][i].innerText == "O" &&
-                board[0][i].innerText == board[1][i].innerText &&
-                board[2][i].innerText == "") {
-                // Assign the empty board that is suitable for win to cell
-                cell = board[2][i];
-            } else if (board[i][0].innerText == "X" || board[i][0].innerText == "O" &&
-                board[i][0].innerText == board[i][1].innerText &&
-                board[i][2].innerText == "") {
-                cell = board[i][2];
-            } else if (board[i][2].innerText == "X" || board[i][2].innerText == "O" &&
-                board[i][2].innerText == board[i][1].innerText &&
-                board[i][0].innerText == "") {
-                cell = board[i][0];
-            } else if (board[2][i].innerText == "X" || board[2][i].innerText == "O" &&
-                board[2][i].innerText == board[1][i].innerText &&
-                board[0][i].innerText == "") {
-                cell = board[0][i];
-            }
-        }
-        let x = 0;
-        for (let i = 0; i < 3; i += 2) {
-            // Check in-between.
-            if (board[0][i].innerText == "X" || board[0][i].innerText == "O" &&
-                board[0][i].innerText == board[2][i].innerText &&
-                board[1][x].innerText == "") {
-                cell = board[1][x];
-            } else if (board[i][0].innerText == "X" || board[i][0].innerText == "O" &&
-                board[i][0].innerText == board[i][2].innerText &&
-                board[x][1].innerText == "") {
-                cell == board[x][1];
-            }
-
-            x++;
-        }
-        // Check diagonally.
-        if (board[0][0].innerText == "X" || board[0][0].innerText == "O" &&
-            board[0][0].innerText == board[1][1].innerText &&
-            board[2][2].innerText == "") {
-            cell = board[2][2];
-        } else if (board[0][0].innerText == "X" || board[0][0].innerText == "O" &&
-            board[0][0].innerText == board[2][2].innerText &&
-            board[1][1].innerText == "") {
-            cell = board[1][1];
-        } else if (board[1][1].innerText == "X" || board[1][1].innerText == "O" &&
-            board[1][1].innerText == board[2][2].innerText &&
-            board[0][0].innerText == "") {
-            cell = board[0][0];
-        } else if (board[2][0].innerText == "X" || board[2][0].innerText == "O" &&
-            board[2][0].innerText == board[1][1].innerText &&
-            board[0][2].innerText == "") {
-            cell = board[0][2];
-        } else if (board[2][0].innerText == "X" || board[2][0].innerText == "O" &&
-            board[2][0].innerText == board[0][2].innerText &&
-            board[1][1].innerText == "") {
-            cell = board[1][1];
-        } else if (board[1][1].innerText == "X" || board[1][1].innerText == "O" &&
-            board[1][1].innerText == board[0][2].innerText &&
-            board[2][0].innerText == "") {
-            cell = board[2][0];
-        } else {
-            // Randomly place because no pattern incoming is detected.
-            randomPlacement();
-        }
+    if (board[0][0].innerText != "" && board[0][0].innerText == board[0][1].innerText && board[0][2].innerText == "") {
+        cell = board[0][2];
+    } else if (board[0][0].innerText != "" && board[0][0].innerText == board[0][2].innerText && board[0][1].innerText == "") {
+        cell = board[0][1];
+    } else if (board[0][2].innerText != "" && board[0][2].innerText == board[0][1].innerText && board[0][0].innerText == "") {
+        cell = board[0][0];
+    } else if (board[1][0].innerText != "" && board[1][0].innerText == board[1][1].innerText && board[1][2].innerText == "") {
+        cell = board[1][2];
+    } else if (board[1][0].innerText != "" && board[1][0].innerText == board[1][2].innerText && board[1][1].innerText == "") {
+        cell = board[1][1];
+    } else if (board[1][1].innerText != "" && board[1][1].innerText == board[1][2].innerText && board[1][0].innerText == "") {
+        cell = board[1][0];
+    } else if (board[2][0].innerText != "" && board[2][0].innerText == board[2][1].innerText && board[2][2].innerText == "") {
+        cell = board[2][2];
+    } else if (board[2][0].innerText != "" && board[2][0].innerText == board[2][2].innerText && board[2][1].innerText == "") {
+        cell = board[2][1];
+    } else if (board[2][1].innerText != "" && board[2][1].innerText == board[2][2].innerText && board[2][0].innerText == "") {
+        cell = board[2][0];
+    } else if (board[0][0].innerText != "" && board[0][0].innerText == board[1][0].innerText && board[2][0].innerText == "") {
+        cell = board[2][0];
+    } else if (board[0][0].innerText != "" && board[0][0].innerText == board[2][0].innerText && board[1][0].innerText == "") {
+        cell = board[1][0];
+    } else if (board[1][0].innerText != "" && board[1][0].innerText == board[2][0].innerText && board[0][0].innerText == "") {
+        cell = board[0][0];
+    } else if (board[0][1].innerText != "" && board[0][1].innerText == board[1][1].innerText && board[2][1].innerText == "") {
+        cell = board[2][1];
+    } else if (board[1][0].innerText != "" && board[1][0].innerText == board[2][1].innerText && board[1][1].innerText == "") {
+        cell = board[1][1];
+    } else if (board[1][1].innerText != "" && board[1][1].innerText == board[2][1].innerText && board[0][1].innerText == "") {
+        cell = board[0][1];
+    } else if (board[0][2].innerText != "" && board[0][2].innerText == board[1][2].innerText && board[2][2].innerText == "") {
+        cell = board[2][2];
+    } else if (board[0][2].innerText != "" && board[0][2].innerText == board[2][2].innerText && board[1][2].innerText == "") {
+        cell = board[1][2];
+    } else if (board[1][2].innerText != "" && board[1][2].innerText == board[2][2].innerText && board[0][2].innerText == "") {
+        cell = board[0][2];
+    } else if (board[0][0].innerText != "" && board[0][0].innerText == board[1][1].innerText && board[2][2].innerText == "") {
+        cell = board[2][2];
+    } else if (board[0][0].innerText != "" && board[0][0].innerText == board[2][2].innerText && board[1][1].innerText == "") {
+        cell = board[1][1];
+    } else if (board[1][1].innerText != "" && board[1][1].innerText == board[2][2].innerText && board[0][0].innerText == "") {
+        cell = board[0][0];
+    } else if (board[2][0].innerText != "" && board[2][0].innerText == board[1][1].innerText && board[0][2].innerText == "") {
+        cell = board[0][2];
+    } else if (board[2][0].innerText != "" && board[2][0].innerText == board[0][2].innerText && board[1][1].innerText == "") {
+        cell = board[1][1];
+    } else if (board[0][2].innerText != "" && board[0][2].innerText == board[1][1].innerText && board[2][0].innerText == "") {
+        cell = board[2][0];
+    } else {
+        cell = randomCell();
     }
 
     // Assign the cell to h1 variable which holds the text.
     let h1 = cell.getElementsByTagName("h1")[0];
 
-    // Place the bots turn to the empty cell.
-    h1.innerHTML = "O";
+    // Place bots turn if it's not a draw, there is no winner and 
+    //      the cell doesn't contain "X".
+    if (boardIsCrowded() == false && thereIsWinner == false && h1.innerHTML != "X") {
+        // Play botSFX.
+        botSFX.play();
+
+        // Place the bots turn to the empty cell.
+        h1.innerHTML = "O";
+
+        // Check for pattern again.
+        if (botPattern() == true) {
+            // There is pattern for the bot.
+            // Call win function.
+            win("bot");
+
+            setTimeout(() => {
+                // Play loseSFX.
+                loseSFX.play();
+
+                // Show text that the bot wins.
+                statusText.innerHTML = "Bot Wins"
+            }, 500);
+        }
+    }
+
+    // Set the board active again after the bots turn.
+    boardActive = true;
 }
 
 
@@ -218,6 +244,7 @@ function reset() {
         });
     }
     thereIsWinner = false;
+    boardActive = true;
     statusText.style.visibility = "visible";
     statusText.innerHTML = "Ready";
 
